@@ -1,0 +1,5 @@
+wget --quiet --directory-prefix=/tmp http://download.jetbrains.com/webide/PhpStorm-7.1.1.tar.gz
+sudo tar xfz /tmp/PhpStorm-7.1.1.tar.gz --strip-components=1 --directory /opt/phpstorm-7.1.1
+sudo ln --symbolic -T /opt/phpstorm-7.1.1 /opt/phpstorm
+mkdir /opt/bin
+sudo ln --symbolic -T /opt/phpstorm/bin/phpstorm.sh /opt/bin/phpstorm

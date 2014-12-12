@@ -1,0 +1,1 @@
+see http://thatbytes.co.uk/2013/05/07/hiera-can-do-anything/

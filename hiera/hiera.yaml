@@ -1,0 +1,15 @@
+---
+:backends:
+  - json
+:logger: puppet
+:merge_behavior: native
+:json:
+  :datadir: /puppet/hiera
+:hierarchy:
+  - 01-harddefaults
+  - 02-nodes/%{location}/%{environment}/%{clientcert}
+  - 03-roles/%{role}
+  - 04-network/%{location}/%{network}
+  - 05-environments/%{environment}
+  - 06-locations/%{location}
+  - 07-softdefaults

@@ -1,0 +1,35 @@
+{
+    "apache" : {
+        "user": "www-data"
+        ,"group": "www-data"
+        ,"group-members": ["manager"]
+
+        ,"document-root": "/var/www"
+        ,"data-dir": "/var/www-data"
+
+        ,"fqdn": "localhost"
+    }
+
+    ,"mysql" : {
+        "root-password": "root"
+    }
+
+    ,"php" : {
+        "source"  : "ppa:ondrej/php5-oldstable"
+        ,"version"    : "5.4"
+        ,"packages" : ["php5", "php5-cli", "php5-readline", "php5-xdebug", "php-apc", "php5-memcached", "php5-imagick", "php5-intl", "php5-curl"]
+    }
+
+    ,"utilities" : ["git", "meld", "xclip", "rsync", "curl", "jq", "elinks", "graphviz"]
+
+    ,"network": {
+        "host-only": {
+            "gateway": "192.168.56.1"
+            ,"netmask": "255.255.255.0"
+            ,"dns_servers": ["192.168.56.1"]
+            ,"ip": "192.168.56.102"
+        }
+    }
+
+    ,"authorized_keys" : "manager https://raw.githubusercontent.com/helstern/public-keys/master/radu-ssh-default-rsa.pub"
+}

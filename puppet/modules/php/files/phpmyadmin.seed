@@ -1,0 +1,81 @@
+# Password confirmation:
+phpmyadmin	phpmyadmin/app-password-confirm	password	root
+
+# Password of the database's administrative user:
+phpmyadmin	phpmyadmin/mysql/admin-pass	password	root
+
+# Password confirmation:
+phpmyadmin	phpmyadmin/password-confirm	password	root
+
+# Password for web-based setup system:
+phpmyadmin	phpmyadmin/setup-password	password	root
+
+# MySQL application password for phpmyadmin:
+phpmyadmin	phpmyadmin/mysql/app-pass	password	root
+
+# Choices: abort, retry
+phpmyadmin	phpmyadmin/remove-error	select	abort
+
+# for internal use.
+phpmyadmin	phpmyadmin/internal/reconfiguring	boolean	false
+
+# Choices: abort, retry, ignore
+phpmyadmin	phpmyadmin/missing-db-package-error	select	abort
+
+# Username for web-based setup system:
+phpmyadmin	phpmyadmin/setup-username	string	admin
+
+# MySQL username for phpmyadmin:
+phpmyadmin	phpmyadmin/db/app-user	string	phpmyadmin
+
+# Choices: abort, retry, retry (skip questions), ignore
+phpmyadmin	phpmyadmin/install-error	select	abort
+
+# Choices: apache2, lighttpd
+phpmyadmin	phpmyadmin/reconfigure-webserver	multiselect	apache2
+# Host running the MySQL server for phpmyadmin:
+phpmyadmin	phpmyadmin/remote/newhost	string	
+
+# Choices: 
+phpmyadmin	phpmyadmin/remote/host	select	
+
+# Choices: abort, retry, retry (skip questions)
+phpmyadmin	phpmyadmin/upgrade-error	select	abort
+# Reinstall database for phpmyadmin?
+phpmyadmin	phpmyadmin/dbconfig-reinstall	boolean	false
+
+# Configure database for phpmyadmin with dbconfig-common?
+phpmyadmin	phpmyadmin/dbconfig-install	boolean	true
+
+# MySQL database name for phpmyadmin:
+phpmyadmin	phpmyadmin/db/dbname	string	phpmyadmin
+
+# Choices: 
+phpmyadmin	phpmyadmin/database-type	select	mysql
+
+# for internal use.
+phpmyadmin	phpmyadmin/internal/skip-preseed	boolean	false
+
+# Port number for the MySQL service:
+phpmyadmin	phpmyadmin/remote/port	string	
+
+# Perform upgrade on database for phpmyadmin with dbconfig-common?
+phpmyadmin	phpmyadmin/dbconfig-upgrade	boolean	true
+
+# Do you want to back up the database for phpmyadmin before upgrading?
+phpmyadmin	phpmyadmin/upgrade-backup	boolean	true
+
+# Deconfigure database for phpmyadmin with dbconfig-common?
+phpmyadmin	phpmyadmin/dbconfig-remove	boolean	true
+
+# Password mismatch
+phpmyadmin	phpmyadmin/passwords-do-not-match	error	
+
+# Choices: unix socket, tcp/ip
+phpmyadmin	phpmyadmin/mysql/method	select	unix socket
+
+# Name of the database's administrative user:
+phpmyadmin	phpmyadmin/mysql/admin-user	string	root
+
+# Do you want to purge the database for phpmyadmin?
+phpmyadmin	phpmyadmin/purge	boolean	false

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+PHP=`which php`
+PHP_FLAGS="-e"
+
+export PHP_IDE_CONFIG="serverName=default"
+export XDEBUG_CONFIG="idekey=PHPSTORM"
+
+$PHP "$PHP_FLAGS" "$@"

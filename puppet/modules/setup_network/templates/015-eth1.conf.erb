@@ -1,0 +1,20 @@
+#the host-only interface
+auto eth1
+allow-hotplug eth1
+iface eth1 inet static
+    address <%= @eth1['address'] %>
+    netmask <%= @eth1['netmask'] %>
+	<% if @eth1['dns_servers'].nil?.eql?(false) or !@eth1['dns_search'].nil?.eql?(false) %>
+        # dns-* options should not be added (using maybe resolvconf package, if installed) to /etc/resolv.conf
+        # dns settings should be added here if managed with ifup, otherwise if managed with Network Manager under /etc/NetworkManager/system-connections/*
+        # using the ini file syntax
+    <% end %>
+	<% if @eth1['dns_servers'].nil?.eql?(false) %>
+        dns-nameservers <%= @eth1['dns_servers'].join(' ') %>
+	<% end %>
+	<% if @eth1['dns_search'].nil?.eql?(false) %>
+        dns-search <%= @eth1['dns_search'] %>
+	<% end %>
+
+up route add -net <%= @eth1['network'] %> netmask <%= @eth1['netmask'] %> gw <%= @eth1['gateway'] %> dev eth1
+down route del -net <%= @eth1['network'] %> netmask <%= @eth1['netmask'] %> gw <%= @eth1['gateway'] %> dev eth1
