@@ -1,0 +1,15 @@
+.vagrant
+
+.project
+.iml
+.idea
+*.iml
+
+#personal files who should never leave the computer
+
+[0-9][1-9]-personal.*
+*.[0-9][1-9]-personal
+
+
+personal.*
+*.personal
