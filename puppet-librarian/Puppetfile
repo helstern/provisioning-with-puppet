@@ -18,3 +18,6 @@ mod 'puppetlabs/mysql'
 
 # puppet module install puppetlabs-vcsrepo --version 0.2.0
 mod 'puppetlabs/vcsrepo'
+
+# puppet module install camptocamp-openssl
+mod 'camptocamp/openssl'
