@@ -18,7 +18,10 @@ vagrantfile     text
 # Example: *.sh text eol=lf
 *.bash   eol=lf
 *.sh     eol=lf
+*.conf   eol=lf
 *.erb    eol=lf
+*.seed.erb eol=lf
+*.conf.erb eol=lf
 Puppetfile eol=lf
 
 # Explicitly declare files that will always have CRLF line endings on checkout.
