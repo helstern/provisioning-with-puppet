@@ -17,6 +17,9 @@ vagrantfile     text
 # Explicitly declare files that will always have LF line endings on checkout.
 # Example: *.sh text eol=lf
 *.bash   eol=lf
+*.sh     eol=lf
+*.erb    eol=lf
+Puppetfile eol=lf
 
 # Explicitly declare files that will always have CRLF line endings on checkout.
 # Example: *.sln text eol=crlf
