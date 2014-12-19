@@ -14,6 +14,12 @@
         "root-password": "root"
     }
 
+    ,"java" : {
+        "version" : "1.7"
+        ,"package" : "jdk"
+        ,"vendor"  : "oracle"
+    }
+
     ,"php" : {
         "source"  : "ppa:ondrej/php5-oldstable"
         ,"version"    : "5.4"
