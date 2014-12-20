@@ -24,19 +24,20 @@ class setup_java inherits setup_java::params
     # pick debconf responsefile
     if $javaVersion =~ /^1\.(6|7|8)/ {
         $enquiringPackage = regsubst('oracle-java:version-installer', ':version', $1)
-        $responseFile     = "$packageName.seed"
+        $responseFile     = "java.install.seed"
     }
 
     # add java ppa
     apt::ppa_repository {'webupd8team/java':
-        refresh => true
+        refresh => true,
+        include_src => true
     }
 
     bootstrap::preseedFile { $responseFile:
-        content => template("setup_java/$packageName.seed.erb"),
-        require => [
-            Apt::Ppa_repository['webupd8team/java']
-        ]
+      source => 'puppet:///modules/setup_java/java.install.seed',
+      require => [
+        Apt::Ppa_repository['webupd8team/java']
+      ]
     }
 
     package { $packageName:
