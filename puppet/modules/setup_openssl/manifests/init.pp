@@ -1,4 +1,4 @@
 class setup_openssl
 {
-  include openssl
+  include '::openssl'
 }
