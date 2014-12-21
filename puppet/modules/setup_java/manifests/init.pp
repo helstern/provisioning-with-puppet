@@ -30,7 +30,7 @@ class setup_java inherits setup_java::params
     # add java ppa
     apt::ppa_repository {'webupd8team/java':
         refresh => true,
-        include_src => true
+#        include_src => true
     }
 
     bootstrap::preseedFile { $responseFile:
@@ -47,5 +47,14 @@ class setup_java inherits setup_java::params
         Apt::Ppa_repository['webupd8team/java'],
         Bootstrap::PreseedFile[$responseFile]
       ],
+    }
+
+    envvars::system { 'JAVA_HOME' :
+      dynamicValue => "readlink --canonicalize-existing $(which javac) | sed 's:/bin/javac::'",
+      isPath  => false,
+      require => [
+        Apt::Ppa_repository['webupd8team/java'],
+        Package[$packageName]
+      ]
     }
 }
