@@ -1,10 +1,12 @@
-class setup_java inherits setup_java::params
+class setup_java
 {
     include bootstrap::preseed
 
-    # obtain these via configuration
-    $javaPackage = $setup_java::params::java_package
-    $javaVersion = $setup_java::params::java_version
+    # retrieve parameters
+    $java = hiera('java')
+    $javaVersion = $java['version']
+    $javaPackage = $java['package']
+
 
     # pick software source package
     if $javaPackage == "jdk" {
