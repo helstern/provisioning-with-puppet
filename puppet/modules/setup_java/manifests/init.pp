@@ -1,10 +1,12 @@
-class setup_java inherits setup_java::params
+class setup_java
 {
     include bootstrap::preseed
 
-    # obtain these via configuration
-    $javaPackage = $setup_java::params::java_package
-    $javaVersion = $setup_java::params::java_version
+    # retrieve parameters
+    $java = hiera('java')
+    $javaVersion = $java['version']
+    $javaPackage = $java['package']
+
 
     # pick software source package
     if $javaPackage == "jdk" {
@@ -24,19 +26,20 @@ class setup_java inherits setup_java::params
     # pick debconf responsefile
     if $javaVersion =~ /^1\.(6|7|8)/ {
         $enquiringPackage = regsubst('oracle-java:version-installer', ':version', $1)
-        $responseFile     = "$packageName.seed"
+        $responseFile     = "java.install.seed"
     }
 
     # add java ppa
     apt::ppa_repository {'webupd8team/java':
-        refresh => true
+        refresh => true,
+#        include_src => true
     }
 
     bootstrap::preseedFile { $responseFile:
-        content => template("setup_java/$packageName.seed.erb"),
-        require => [
-            Apt::Ppa_repository['webupd8team/java']
-        ]
+      source => 'puppet:///modules/setup_java/java.install.seed',
+      require => [
+        Apt::Ppa_repository['webupd8team/java']
+      ]
     }
 
     package { $packageName:
@@ -46,5 +49,14 @@ class setup_java inherits setup_java::params
         Apt::Ppa_repository['webupd8team/java'],
         Bootstrap::PreseedFile[$responseFile]
       ],
+    }
+
+    envvars::system { 'JAVA_HOME' :
+      dynamicValue => "readlink --canonicalize-existing $(which javac) | sed 's:/bin/javac::'",
+      isPath  => false,
+      require => [
+        Apt::Ppa_repository['webupd8team/java'],
+        Package[$packageName]
+      ]
     }
 }
