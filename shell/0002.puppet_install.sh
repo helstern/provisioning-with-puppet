@@ -5,7 +5,11 @@ set -x
 set -o pipefail
 PWD=$(pwd)
 
-sudo apt-get upgrade --yes
+# check that script is running with elevated privileges
+if [ $(/usr/bin/id -u) -ne 0 ]; then
+    echo "Not running as root or using sudo"
+    exit 1
+fi
 
 #enables puppet labs repository for puppet
 puppetEnablePuppetLabsRepository ()
@@ -17,8 +21,8 @@ puppetEnablePuppetLabsRepository ()
 
     echo "enabling puppet labs repository for puppet"
     wget --directory-prefix /tmp https://apt.puppetlabs.com/puppetlabs-release-precise.deb >/dev/null 2>&1 \
-    && sudo dpkg --install  --force-overwrite /tmp/puppetlabs-release-precise.deb >/dev/null 2>&1 \
-    && sudo apt-get update > /dev/null 2>&1
+    && dpkg --install  --force-overwrite /tmp/puppetlabs-release-precise.deb >/dev/null 2>&1 \
+    && apt-get update > /dev/null 2>&1
 }
 
 pkgLogInstallStatus ()
@@ -48,7 +52,7 @@ pkgInstallUnlessExists ()
         return 1
     fi
 
-    sudo apt-get --yes install $PKG >/dev/null 2>&1
+    apt-get --yes install $PKG >/dev/null 2>&1
 
     if [ $? -ne 0 ]; then
         return 2
@@ -112,18 +116,24 @@ ruby_source_dir_name="ruby-1.9.3-p545"
 INSTALL_RUBY=true && type ruby > /dev/null 2>&1 && versionMinimumIsSatisfied ${ruby_version_string} $(ruby --version | cut --fields 2 --delimiter ' ') && INSTALL_RUBY=false
 if ${INSTALL_RUBY}; then
 # Install Ruby, see https://leonard.io/blog/2012/05/installing-ruby-1-9-3-on-ubuntu-12-04-precise-pengolin
-    sudo apt-get install ruby1.9.1 ruby1.9.1-dev \
-    rubygems1.9.1 irb1.9.1 ri1.9.1 rdoc1.9.1 \
-    build-essential libopenssl-ruby1.9.1 libssl-dev zlib1g-dev
+    if ! apt-get install --fix-missing --yes build-essential libssl-dev zlib1g-dev ; then
+        echo 'failed to install build-essential libssl-dev zlib1g-dev'
+        exit 1
+    fi
+    if ! apt-get install --fix-missing --yes ruby1.9.1 ruby1.9.1-dev rubygems1.9.1 irb1.9.1 ri1.9.1 rdoc1.9.1 libopenssl-ruby1.9.1; then
+        echo 'failed to install ruby1.9.1 ruby1.9.1-dev rubygems1.9.1 irb1.9.1 ri1.9.1 rdoc1.9.1 libopenssl-ruby1.9.1'
+        exit 1
+    fi
 
-    sudo update-alternatives --install /usr/bin/ruby ruby /usr/bin/ruby1.9.1 400 \
+
+    update-alternatives --install /usr/bin/ruby ruby /usr/bin/ruby1.9.1 400 \
          --slave /usr/share/man/man1/ruby.1.gz ruby.1.gz /usr/share/man/man1/ruby1.9.1.1.gz \
         --slave   /usr/bin/ri ri /usr/bin/ri1.9.1 \
         --slave   /usr/bin/irb irb /usr/bin/irb1.9.1 \
         --slave   /usr/bin/rdoc rdoc /usr/bin/rdoc1.9.1
 
     # sudo gem update --system --no-ri --no-rdoc
-    sudo gem install bundler --no-ri --no-rdoc -f
+    gem install bundler --no-ri --no-rdoc -f
 fi
 
 #enable puppet labs repository
@@ -135,7 +145,7 @@ INSTALL_PUPPET=true && type puppet > /dev/null 2>&1 && versionMinimumIsSatisfied
 
 if ${INSTALL_PUPPET}; then
     #known puppet issue with overwritting man pages, see http://projects.puppetlabs.com/issues/16746#note-2
-    sudo apt-get install \
+    apt-get install \
         puppet="$PUPPET_MIN_VERSION" \
         puppet-common="$PUPPET_MIN_VERSION" \
         puppetmaster="$PUPPET_MIN_VERSION" \
@@ -157,14 +167,14 @@ fi
 #puppet configuration
 if ! gem search puppet-module --local --installed >/dev/null 2>&1; then
     echo "installing puppet-module gem" \
-    && sudo gem install puppet-module \
+    && gem install puppet-module \
     && echo "installed puppet-module gem"
 fi
 
 #install librarian-puppet package manager for puppet
 if ! gem search librarian-puppet --local --installed >/dev/null 2>&1; then
     echo "installing librarian-puppet gem" \
-    && sudo gem install librarian-puppet \
+    && gem install librarian-puppet \
     && echo "installed librarian-puppet gem"
 fi
 
@@ -174,14 +184,14 @@ PUPPETFILE_TARGET="/etc/puppet/Puppetfile"
 REPOSITORY_PATH=$(dirname ${PUPPETFILE_TARGET})
 
 #copy the repository configuration file
-sudo cp --remove-destination ${PUPPETFILE_SOURCE} ${PUPPETFILE_TARGET}
+cp --remove-destination ${PUPPETFILE_SOURCE} ${PUPPETFILE_TARGET}
 
 # if a .lock file exists, the repository must be updated otherwise it must initialized
 cd "$REPOSITORY_PATH"
 if [ -f ${PUPPETFILE_TARGET}".lock" ]; then
-    sudo librarian-puppet update  #why doesn't it work with --path instead of cd?
+    librarian-puppet update  #why doesn't it work with --path instead of cd?
 else
-   sudo librarian-puppet install --clean
+   librarian-puppet install --clean
 fi
 cd "$PWD"
 
