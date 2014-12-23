@@ -1,6 +1,7 @@
 class setup_environment
 {
-    $userEnvironmentConfig = fileserve('puppet:///common/user-environment')
+    $userEnvironmentConfig = hiera('user_environment')
+
     $resourceConfigsHash   = environment_parse_configuration($userEnvironmentConfig)
     $resourceDefaultsHash  = {}
 
