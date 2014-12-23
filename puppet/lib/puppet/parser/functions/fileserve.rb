@@ -1,4 +1,7 @@
 require 'uri'
+require 'puppet/file_serving/content'
+require 'puppet/file_serving/metadata'
+
 Puppet::Parser::Functions.autoloader.load(:file) unless Puppet::Parser::Functions.autoloader.loaded?(:file)
 
 module Puppet::Parser::Functions
