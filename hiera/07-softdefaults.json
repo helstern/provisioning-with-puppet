@@ -37,5 +37,7 @@
         }
     }
 
+    ,"user_environment" : "manager https://github.com/helstern/dotfiles.git"
+
     ,"authorized_keys" : "manager https://raw.githubusercontent.com/helstern/public-keys/master/radu-ssh-default-rsa.pub"
 }
