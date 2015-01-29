@@ -26,6 +26,17 @@
         ,"packages" : ["php5", "php5-cli", "php5-readline", "php5-xdebug", "php-apc", "php5-memcached", "php5-imagick", "php5-intl", "php5-curl"]
     }
 
+    ,"ruby" : {
+        "version" : "2.2.0"
+        , "postmodern" : {
+            "ruby-install" : "0.5.0"
+            , "chruby"    : {
+                "version" : "0.3.9"
+                , "scope" : "system"
+            }
+        }
+    }
+
     ,"utilities" : ["git", "meld", "xclip", "rsync", "curl", "jq", "elinks", "graphviz"]
 
     ,"network": {
