@@ -9,7 +9,7 @@ define ruby-install::install-postmodern (
   # copy archive from fileserver
   $source_archive = "/tmp/ruby-install-$version.tar.gz"
   file { "$source_archive":
-    source => "puppet:///ruby-install/v$version-bin.tar.gz",
+    source => "puppet:///ruby-install/v$version.tar.gz",
     backup => false
   }
 
