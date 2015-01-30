@@ -16,7 +16,7 @@ define ruby-install::install-postmodern (
   # copy the installer
   file { '/tmp/install_ruby-install.sh':
     ensure  => present,
-    source  => "puppet:///modules/ruby-install/installer-postmodern.sh",
+    source  => "puppet:///modules/ruby-install/install-postmodern.sh",
   }
 
   exec { "install_ruby-install":

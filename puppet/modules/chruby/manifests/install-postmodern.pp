@@ -16,15 +16,15 @@ define chruby::install-postmodern
   }
 
   # copy the installer
-  file { '/tmp/install-chruby.sh':
+  file { '/tmp/install_chruby.sh':
     ensure  => present,
     source  => "puppet:///modules/chruby/install-postmodern.sh",
   }
 
-  exec { "install-chruby":
+  exec { "install_chruby":
     command => "bash /tmp/install_chruby.sh $version $source_archive",
     creates => '/usr/local/share/chruby/chruby.sh',
-    require => [File['/tmp/install_ruby-install.sh'], File["$source_archive"]]
+    require => [File['/tmp/install-chruby.sh'], File["$source_archive"]]
   }
 
   if ($scope == 'system') {
