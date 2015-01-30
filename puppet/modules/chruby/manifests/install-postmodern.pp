@@ -1,4 +1,4 @@
-define chruby::install-postmodern (
+define chruby::install-postmodern(
   $version = $title,
   $install_scope = 'system'
 ) {
@@ -39,5 +39,5 @@ define chruby::install-postmodern (
         Exec["install_chruby"],
       ],
     }
-#  }
+  }
 }
