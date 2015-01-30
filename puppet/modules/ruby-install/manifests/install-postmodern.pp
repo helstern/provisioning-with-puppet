@@ -1,6 +1,5 @@
-define ruby-install::install-postmodern
-(
-  $version = undef
+define ruby-install::install-postmodern (
+  $version = $title
 ) {
 
   if ($version == undef) {
