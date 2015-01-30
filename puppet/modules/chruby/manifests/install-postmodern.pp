@@ -24,7 +24,7 @@ define chruby::install-postmodern
   exec { "install_chruby":
     command => "bash /tmp/install_chruby.sh $version $source_archive",
     creates => '/usr/local/share/chruby/chruby.sh',
-    require => [File['/tmp/install-chruby.sh'], File["$source_archive"]]
+    require => [File['/tmp/install_chruby.sh'], File["$source_archive"]]
   }
 
   if ($scope == 'system') {
