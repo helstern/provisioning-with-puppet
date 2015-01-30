@@ -1,6 +1,6 @@
 define chruby::install-postmodern
 (
-  $version = undef,
+  $version = $title,
   $scope = 'system'
 ) {
 
