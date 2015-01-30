@@ -9,6 +9,7 @@ class setup_ruby::ruby-install
   exec { "install_ruby":
     require => Ruby-install::Install-postmodern[$version],
     command => "ruby-install ruby $ruby_version",
-    creates => "/opt/rubies/ruby-$ruby_version"
+    creates => "/opt/rubies/ruby-$ruby_version",
+    timeout => 600
   }
 }
