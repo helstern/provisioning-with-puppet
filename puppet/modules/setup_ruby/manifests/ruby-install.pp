@@ -1,9 +1,9 @@
-class ruby-install
+class setup_ruby::ruby-install
 {
   $ruby = hiera('ruby')
 
   $version = $ruby['postmodern']['ruby-install']
-  ruby_install::install-postmodern { $version :}
+  ruby-install::install-postmodern { $version :}
 
   $ruby_version = $ruby['version']
 
