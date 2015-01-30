@@ -27,7 +27,7 @@
     }
 
     ,"ruby" : {
-        "version" : "2.2.0"
+        "version" : "2.1"
         , "postmodern" : {
             "ruby-install" : "0.5.0"
             , "chruby"    : {
