@@ -9,11 +9,10 @@ if [ -z "${2}" ]; then
 fi
 
 
-VERSION="${1}"
+TARGET_DIR="/tmp/chruby-${1}"
 SOURCE_ARCHIVE="${2}"
 
-cd /tmp
-tar -xzvf "${SOURCE_ARCHIVE}" --target /tmp/chruby-${VERSION}
-cd chruby-${VERSION}/ && make install
-
-cd /tmp && rm --force --recursive chruby-${VERSION}/
+mkdir ${TARGET_DIR}
+tar -xzvf "${SOURCE_ARCHIVE}" --directory ${TARGET_DIR}
+cd ${TARGET_DIR} && make install
+cd /tmp && rm --force --recursive ${TARGET_DIR}
