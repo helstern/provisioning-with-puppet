@@ -9,9 +9,9 @@ define chruby::install-postmodern
   }
 
   # copy archive from fileserver
-  $source_archive = "/tmp/ruby-install-$version.tar.gz"
+  $source_archive = "/tmp/chruby-$version.tar.gz"
   file { "$source_archive":
-    source => "puppet:///ruby-install/v$version-bin.tar.gz",
+    source => "puppet:///chruby/v$version-bin.tar.gz",
     backup => false
   }
 
