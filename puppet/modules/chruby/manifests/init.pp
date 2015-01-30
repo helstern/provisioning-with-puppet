@@ -2,9 +2,9 @@ class chruby
 {
   $ruby = hiera('ruby')
   $version = $ruby['postmodern']['chruby']['version']
-  $scope = $ruby['postmodern']['chruby']['version']
+  $install_scope = $ruby['postmodern']['chruby']['scope']
 
   chruby::install-postmodern { "$version" :
-    scope => $scope
+    install_scope => $install_scope
   }
 }

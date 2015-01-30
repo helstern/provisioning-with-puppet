@@ -1,7 +1,6 @@
-define chruby::install-postmodern
-(
+define chruby::install-postmodern (
   $version = $title,
-  $scope = 'system'
+  $install_scope = 'system'
 ) {
 
   if ($version == undef) {
@@ -27,7 +26,9 @@ define chruby::install-postmodern
     require => [File['/tmp/install_chruby.sh'], File["$source_archive"]]
   }
 
-  if ($scope == 'system') {
+  info $install_scope
+
+  if ($install_scope == 'system') {
     file { "/etc/profile.d/chruby.sh":
       ensure  => present,
       owner   => root,
@@ -38,5 +39,5 @@ define chruby::install-postmodern
         Exec["install_chruby"],
       ],
     }
-  }
+#  }
 }
