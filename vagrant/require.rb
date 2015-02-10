@@ -1,1 +1,1 @@
-require 'puppet_standalone_configurator'
+require_relative 'puppet_standalone_configurator.rb'
