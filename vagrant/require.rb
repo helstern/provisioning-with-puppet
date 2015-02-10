@@ -1,0 +1,1 @@
+require 'puppet_standalone_configurator'
