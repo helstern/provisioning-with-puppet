@@ -33,6 +33,8 @@ class PuppetStandaloneConfigurator
     case path_name
       when 'hiera'
         [@host_base_path, 'hiera'].join(File::SEPARATOR)
+      when 'hiera.yaml'
+        [@host_base_path, 'hiera', 'hiera.yaml'].join(File::SEPARATOR)
       when 'puppet-manifests'
         [@host_base_path, 'puppet-manifests'].join(File::SEPARATOR)
       when 'puppet-librarian'
@@ -54,6 +56,8 @@ class PuppetStandaloneConfigurator
     case path_name
       when 'hiera'
         [@guest_path, 'hiera'].join('/')
+      when 'hiera.yaml'
+        [@guest_path, 'hiera', 'hiera.yaml'].join('/')
       when 'puppet-manifests'
         [@guest_path, 'puppet-manifests'].join('/')
       when 'puppet-librarian'
@@ -109,7 +113,7 @@ class PuppetStandaloneConfigurator
     options << '--modulepath ' + [guest_path('puppet-modules'), '/etc/puppet/modules'].join(':')
     options << '--libdir ' + guest_path('puppet-libraries')
 
-    options << '--hiera_config=' + guest_path('hiera') if @with_hiera
+    options << '--hiera_config ' + guest_path('hiera.yaml') if @with_hiera
     options << '--manifestdir ' + guest_path('puppet-manifests') if @with_manifests
 
     if @with_manifests
