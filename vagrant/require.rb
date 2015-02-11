@@ -1,0 +1,1 @@
+require_relative 'puppet_standalone_configurator.rb'
