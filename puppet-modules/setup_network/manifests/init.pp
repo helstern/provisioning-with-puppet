@@ -55,7 +55,7 @@ class setup_network (
         notify => Exec['restart networking service']
     }
 
-    if ($operatingsystem =~ /(?i-mx:^ubuntux)/ and $operatingsystemrelease =~ /^14/) {
+    if ($operatingsystem =~ /(?i-mx:^ubuntu)/ and $operatingsystemrelease =~ /^14/) {
       $command = 'ifdown --exclude=lo -a && ifup --exclude=lo -a'
     } else {
       $command = '/etc/init.d/networking restart'
