@@ -1,5 +1,5 @@
 #this type allows definition of debconf answer files
-define bootstrap::preseedFile (
+define bootstrap::preseed_file (
   $file = $title,
   $content = undef,
   $source = undef
@@ -8,7 +8,7 @@ define bootstrap::preseedFile (
   include bootstrap::preseed
 
   if $source != undef and $content != undef {
-    fail('Can not specify both content and source for a boostrap::preseedFile')
+    fail('Can not specify both content and source for a boostrap::preseed_file')
   }
 
   if $source == undef and $content == undef {
