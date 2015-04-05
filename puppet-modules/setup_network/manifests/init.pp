@@ -1,5 +1,8 @@
 
-class setup_network {
+class setup_network (
+  $operatingsystem = $::operatingsystem,
+  $operatingsystemrelease = $::operatingsystemrelease
+) {
 
   $network = hiera('network')
   $host_only = $network['host-only']
@@ -52,8 +55,14 @@ class setup_network {
         notify => Exec['restart networking service']
     }
 
-  exec { 'restart networking service' :
-    refreshonly  => true,
-    command => '/etc/init.d/networking restart',
-  }
+    if ($operatingsystem =~ /(?i-mx:^ubuntux)/ and $operatingsystemrelease =~ /^14/) {
+      $command = 'ifdown --exclude=lo -a && ifup --exclude=lo -a'
+    } else {
+      $command = '/etc/init.d/networking restart'
+    }
+
+    exec { 'restart networking service' :
+      refreshonly  => true,
+      command => $command,
+    }
 }
