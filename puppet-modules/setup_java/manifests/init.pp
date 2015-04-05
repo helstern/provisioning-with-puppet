@@ -35,7 +35,7 @@ class setup_java
 #        include_src => true
     }
 
-    bootstrap::preseedFile { $responseFile:
+    bootstrap::preseed_file { $responseFile:
       source => 'puppet:///modules/setup_java/java.install.seed',
       require => [
         Apt::Ppa_repository['webupd8team/java']
@@ -47,7 +47,7 @@ class setup_java
       responsefile => "$bootstrap::preseed::dir$responseFile",
       require => [
         Apt::Ppa_repository['webupd8team/java'],
-        Bootstrap::PreseedFile[$responseFile]
+        Bootstrap::Preseed_file[$responseFile]
       ],
     }
 
