@@ -4,6 +4,9 @@
 #
 set -ex
 
+echo "Check that RubyGems is allready installed otherwise installation will fail..."
+which gem >/dev/null
+
 # Load up the release information
 . /etc/lsb-release
 
@@ -43,10 +46,3 @@ DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -
 
 echo "Puppet installed!"
 
-# Install RubyGems for the provider
-echo "Installing RubyGems..."
-if [ $DISTRIB_CODENAME != "trusty" ]; then
-  apt-get install -y rubygems >/dev/null
-fi
-gem install --no-ri --no-rdoc rubygems-update
-update_rubygems >/dev/null

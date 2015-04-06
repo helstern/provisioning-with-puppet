@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # check that script is running with elevated privileges
 if [ $(/usr/bin/id -u) -ne 0 ]; then
@@ -46,13 +46,13 @@ if ${INSTALL_RUBY}; then
         exit 1
     fi
 
-
     update-alternatives --install /usr/bin/ruby ruby /usr/bin/ruby1.9.1 400 \
          --slave /usr/share/man/man1/ruby.1.gz ruby.1.gz /usr/share/man/man1/ruby1.9.1.1.gz \
         --slave   /usr/bin/ri ri /usr/bin/ri1.9.1 \
         --slave   /usr/bin/irb irb /usr/bin/irb1.9.1 \
         --slave   /usr/bin/rdoc rdoc /usr/bin/rdoc1.9.1
 
-    # sudo gem update --system --no-ri --no-rdoc
     gem install bundler --no-ri --no-rdoc -f
+    gem install --no-ri --no-rdoc rubygems-update
+    update_rubygems >/dev/null
 fi

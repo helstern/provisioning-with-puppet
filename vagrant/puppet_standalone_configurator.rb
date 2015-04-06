@@ -110,12 +110,10 @@ class PuppetStandaloneConfigurator
 
     vm_config.provision :shell do |shell|
       shell.path = [@host_base_path, 'shell', '0002.puppet_install.sh'].join(File::SEPARATOR)
-      shell.args = ['--puppet_source /puppet']
     end
 
     vm_config.provision :shell do |shell|
       shell.path = [@host_base_path, 'shell', '0003.puppet_tools.sh'].join(File::SEPARATOR)
-      shell.args = ['--puppet_source /puppet']
     end
 
     nil
