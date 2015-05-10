@@ -4,20 +4,30 @@ class PuppetStandaloneConfigurator
 
   attr_reader :guest_path
 
-
   # @param [Hash] opts
   def initialize (opts = {})
-    opts = { :provisioner_id => '', :guest_path => '', :with_hiera => false, :with_manifests => true }.merge(opts)
-    fail('provisioner_id must not be empty') if opts.fetch('provisioner_id').empty?
+    opts = {
+        :provisioner_id => '',
+        :guest_path => '',
+        :puppet  => {
+            :use_default_manifests => true,
+            :module_extra_dirs => []
+        }
+    }.merge(opts)
 
-    @provisioner_id = opts.fetch('provisioner_id')
-    @guest_path     = opts.fetch('guest_path')
+    fail('provisioner_id must not be empty') if opts.fetch(:provisioner_id).empty?
+
+    @provisioner_id = opts.fetch(:provisioner_id)
+    @guest_path     = opts.fetch(:guest_path)
 
     @with_hiera = nil
-    @with_hiera = opts.fetch('with_hiera') unless opts.fetch('with_hiera').nil?
+    @with_hiera = opts.fetch(:with_hiera) unless opts.fetch(:with_hiera).nil?
 
-    @with_manifests = false
-    @with_manifests = true if opts.fetch('with_manifests') == true
+    @use_default_manifests = false
+    @use_default_manifests = true if opts.fetch(:puppet).fetch(:use_default_manifests) == true
+
+    @module_extra_dirs = []
+    @module_extra_dirs = opts.fetch(:puppet).fetch(:module_extra_dirs) unless opts.fetch(:puppet).nil? || opts.fetch(:puppet).fetch(:module_extra_dirs).nil?
 
     @host_base_path = [File.dirname(__FILE__), '..'].join(File::SEPARATOR)
     @host_base_path = File.expand_path(@host_base_path)
@@ -78,61 +88,97 @@ class PuppetStandaloneConfigurator
 
   end
 
+  # @return [Array[SyncedFolderNormal]]
+  def list_synced_folders
+    list = []
+
+    folder_names_list = %w(puppet-librarian puppet-libraries puppet-modules)
+    hiera_folder_names_list = %w(puppet-hiera hiera-defaults)
+
+    unless @with_hiera.nil?
+      folder_names_list.concat(hiera_folder_names_list)
+    end
+
+    # sync all the folders
+    folder_names_list.each do |name|
+      host_path = host_path(name)
+      guest_path = guest_path(name)
+
+      synced_folder = SyncedFolderNormal.new(host_path, guest_path)
+      list.push(synced_folder)
+    end
+
+    # custom hiera folders which should be mounted after all the others
+    unless @with_hiera.nil?
+      hiera_path = guest_path('puppet-hiera')
+      @with_hiera.each do |hiera_node|
+        host_path = hiera_node.fetch(:host_path)
+        hierarchy_name = hiera_node.fetch(:name)
+
+        fail('hiera defaults level can not be overridden') if  'defaults'.eql?(hierarchy_name)
+
+        synced_folder = SyncedFolderHiera.new(host_path, hiera_path, hierarchy_name)
+        list.push(synced_folder)
+      end
+    end
+
+    list
+  end
+
   # Synchronizes any folders from the host machine which are required
   #
   # @param [::VagrantPlugins::Kernel_V2::VMConfig] vm_config
   def sync_folders (vm_config)
 
-    unless @with_hiera.nil?
-      vm_config.synced_folder host_path('puppet-hiera'), guest_path('puppet-hiera')
-      vm_config.synced_folder host_path('hiera-defaults'), guest_path('hiera-defaults')
-      @with_hiera.each do |hiera_node|
-        vm_config.synced_folder hiera_node.fetch(:host_path), hiera_guest_path(hiera_node.fetch(:name))
-      end
+    synced_folders = list_synced_folders
+    synced_folders.each do |synced_folder|
+      synced_folder.sync(vm_config)
     end
-
-    if @with_manifests
-      vm_config.synced_folder host_path('puppet-manifests'), guest_path('puppet-manifests')
-    end
-
-    vm_config.synced_folder host_path('puppet-librarian'), guest_path('puppet-librarian')
-    vm_config.synced_folder host_path('puppet-libraries'), guest_path('puppet-libraries')
-    vm_config.synced_folder host_path('puppet-modules'), guest_path('puppet-modules')
 
   end
 
   # @param [::VagrantPlugins::Kernel_V2::VMConfig] vm_config
   def install (vm_config)
 
-    vm_config.provision :shell do |shell|
-      shell.path = [@host_base_path, 'shell', '0001.pre_requisites.sh'].join(File::SEPARATOR)
-    end
-
-    vm_config.provision :shell do |shell|
-      shell.path = [@host_base_path, 'shell', '0002.puppet_install.sh'].join(File::SEPARATOR)
-    end
-
-    vm_config.provision :shell do |shell|
-      shell.path = [@host_base_path, 'shell', '0003.puppet_tools.sh'].join(File::SEPARATOR)
+    install_scripts = %w(0001.pre_requisites.sh 0002.puppet_install.sh 0003.puppet_tools.sh)
+    install_scripts.each do |script|
+      vm_config.provision :shell do |shell|
+        path = [@host_base_path, 'shell', script].join(File::SEPARATOR)
+        shell.path = path
+      end
     end
 
     nil
+
+  end
+
+  def list_puppet_options
+
+    options = []
+    module_dirs = [guest_path('puppet-modules'), '/etc/puppet/modules']
+    options << '--modulepath ' + @module_extra_dirs.concat(module_dirs).join(':')
+    options << '--libdir ' + guest_path('puppet-libraries')
+
+    options << '--hiera_config ' + guest_path('hiera.yaml') unless @with_hiera.nil?
+    options << '--manifestdir ' + guest_path('puppet-manifests') if @use_default_manifests
+
+    options
+
   end
 
   # @param [::VagrantPlugins::Kernel_V2::VMConfig] vm_config
   def configure (vm_config, &block)
 
-    options = []
-    options << '--modulepath ' + [guest_path('puppet-modules'), '/etc/puppet/modules'].join(':')
-    options << '--libdir ' + guest_path('puppet-libraries')
-
-    options << '--hiera_config ' + guest_path('hiera.yaml') unless @with_hiera.nil?
-    options << '--manifestdir ' + guest_path('puppet-manifests') if @with_manifests
-
-    if @with_manifests
-      vm_config.provision @provisioner_id.to_sym, :temp_dir => @guest_path, :manifest_file => 'bootstrap.pp', :options => options, &block
+    if @use_default_manifests
+      vm_config.provision(
+        @provisioner_id.to_sym,
+        :temp_dir => @guest_path,
+        :manifest_file => 'bootstrap.pp',
+        :options => list_puppet_options,
+        &block
+      )
     else
-      vm_config.provision @provisioner_id.to_sym, :temp_dir => @guest_path, :options => options, &block
+      vm_config.provision(@provisioner_id.to_sym, :temp_dir => @guest_path, :options => list_puppet_options, &block)
     end
 
     nil
