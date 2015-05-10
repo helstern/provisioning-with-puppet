@@ -41,8 +41,16 @@ class apache
 
     # set the fully qualified name of the server
     $fqdn = $apache['fqdn']
-    exec { "echo 'ServerName $fqdn' | sudo tee /etc/apache2/conf.d/fqdn":
-            require => Package['apache2'],
+
+
+    if ($operatingsystem =~ /(?i-mx:^ubuntu)/ and $operatingsystemrelease =~ /^14/) {
+      $command = "echo 'ServerName $fqdn' | sudo tee /etc/apache2/conf-available/fqdn.conf ; a2enconf fqdn"
+    } else {
+      $command = "echo 'ServerName $fqdn' | sudo tee /etc/apache2/conf.d/fqdn"
+    }
+
+    exec { $command:
+        require => [Package['apache2']]
     }
 
     #change the group ownership of apache's document root and it's contents, make sure group members can write
