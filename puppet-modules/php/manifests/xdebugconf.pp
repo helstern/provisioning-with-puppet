@@ -2,6 +2,12 @@ class php::xdebugconf
 {
   $xdebugConfName = 'xdebug-conf-override'
 
+  if (defined(Service['apache2'])) {
+    $notify  = [Service['apache2']]
+  } else {
+    $notify = []
+  }
+
   file { "file:$xdebugConfName":
     ensure  => present,
     owner   => root,
@@ -9,8 +15,9 @@ class php::xdebugconf
     mode    => 664,
     path    => "/etc/php5/mods-available/$xdebugConfName.ini",
     source  => "puppet:///modules/php/$xdebugConfName.ini",
-    notify  => Service['apache2'],
+    notify => $notify
   }
+
 
   exec { "exec:$xdebugConfName":
     command => "php5enmod $xdebugConfName",
